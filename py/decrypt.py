@@ -2,45 +2,51 @@ import os
 from cryptography.fernet import Fernet, InvalidToken
 from .clean import Clean
 
+
+def DecryptFile(file_path, fernet):
+    try:
+        with open(file_path, "rb") as encrypted_file:
+                        encrypted_data = encrypted_file.read()
+                            
+        decrypted_data = fernet.decrypt(encrypted_data)
+
+        with open(file_path, "wb") as decrypted_file:
+                        decrypted_file.write(decrypted_data)
+
+        print(f"\n{file_path} has been decrypted")
+    except InvalidToken:
+            print(f"\nThe file {file_path} has already been decrypted.")
+
+def DecryptFolder(path,fernet):
+    for files in os.listdir(path):
+        file_path = os.path.join(path,files)
+        if os.path.isdir(file_path):
+            print(f"\nEntering folder: {file_path}")
+            DecryptFolder(file_path,fernet)
+        else:
+            DecryptFile(file_path,fernet)
+
+
+
 # Function to decrypt files
-def Decrypt(path):
+def Decrypt(path,keyPath):
     Clean()
 
     # Checks if the directory exists
     if not os.path.isdir(path):
         print("\nDirectory not found")   
         return
+    if not os.path.exists(keyPath):
+        print("Key was not found")
+        return
 
-    # Lists the files inside the directory
-    files = os.listdir(path)
 
-    # Loop that iterates over the number of files inside the directory
-    for i in range(len(files)): 
-        file_path = os.path.join(path, files[i])
-            
-        try:
-            # Checks if it's a directory or a file
-            if os.path.isdir(file_path):
-                print(f"\n{files[i]} is a folder\n\n")
-
-            else:
-                # Decrypting
-                print(f"\nDecrypting: {files[i]}")  
-                with open("FileKey.key", "rb") as file_key:
-                    key = file_key.read()
+    with open(keyPath, "rb") as file_key:
+        key = file_key.read()
                             
-                fernet = Fernet(key)
+    fernet = Fernet(key)
 
-                with open(file_path, "rb") as encrypted_file:
-                    encrypted_data = encrypted_file.read()
-                        
-                decrypted_data = fernet.decrypt(encrypted_data)
+    DecryptFolder(path, fernet)
 
-                with open(file_path, "wb") as decrypted_file:
-                    decrypted_file.write(decrypted_data)
 
-                print(f"\n{files[i]} has been decrypted")
-
-        # If the file is already decrypted, it will fall into this exception
-        except InvalidToken:
-            print(f"\nThe file {files[i]} has already been decrypted.")
+    
