@@ -1,6 +1,7 @@
 import os
 from cryptography.fernet import Fernet, InvalidToken
 from .clean import Clean
+from .colors import failure, success, alert, warning
 
 
 def DecryptFile(file_path, fernet):
@@ -13,15 +14,15 @@ def DecryptFile(file_path, fernet):
         with open(file_path, "wb") as decrypted_file:
                         decrypted_file.write(decrypted_data)
 
-        print(f"\n{file_path} has been decrypted")
+        print(f"{success} {file_path} has been decrypted")
     except InvalidToken:
-            print(f"\nThe file {file_path} has already been decrypted.")
+            print(f"{alert} The file {file_path} has already been decrypted.")
 
 def DecryptFolder(path,fernet):
     for files in os.listdir(path):
         file_path = os.path.join(path,files)
         if os.path.isdir(file_path):
-            print(f"\nEntering folder: {file_path}")
+            print(f"{warning} Entering folder: {file_path}")
             DecryptFolder(file_path,fernet)
         else:
             DecryptFile(file_path,fernet)
@@ -34,10 +35,10 @@ def Decrypt(path,keyPath):
 
     # Checks if the directory exists
     if not os.path.isdir(path):
-        print("\nDirectory not found")   
+        print(f"\n{failure}Directory not found")   
         return
     if not os.path.exists(keyPath):
-        print("Key was not found")
+        print(f"\n{failure}Key was not found")
         return
 
 

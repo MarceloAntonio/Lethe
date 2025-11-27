@@ -1,26 +1,8 @@
-# Ambientes Virtuais
 venv/
 .venv/
 env/
 .env
-
-# Cache do Python
 __pycache__/
-*.pyc
-*.pyo
-*.pyd
-
-# Arquivos de Distribuição / Pacotes
-build/
-dist/
-*.egg-info/
-*.egg
-
-# Arquivos de IDEs e Editores
 .idea/
 .vscode/
-
-# Arquivos de Sistema Operacional
-.DS_Store
-Thumbs.db
-FileKey.key
+*.key

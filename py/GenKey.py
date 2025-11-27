@@ -1,5 +1,6 @@
 from cryptography.fernet import Fernet
 import os
+from .colors import success
 
 def GenKey():
     key = Fernet.generate_key()
@@ -20,7 +21,7 @@ def GenKey():
         filekey.write(key)
         
     fullPath = os.path.abspath(final_name)
-    print(f"\nThe key was created successfully: {fullPath}\n")
+    print(f"\n{success} The key was created successfully: {fullPath}\n")
 
 if __name__ == "__main__":
     GenKey()
